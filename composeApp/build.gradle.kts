@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.util.Properties
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -12,6 +14,13 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.buildConfig)
 }
+
+val secretKeyProperties by lazy {
+    val secretKeyPropertiesFile = rootProject.file("credential.properties")
+    Properties().apply { secretKeyPropertiesFile.inputStream().use { secret -> load(secret) } }
+}
+
+val apiKey = secretKeyProperties.getProperty("api_key")
 
 kotlin {
     androidTarget {
@@ -84,7 +93,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.kermit)
-            implementation(libs.kermit.bugsnag)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -156,6 +164,6 @@ buildConfig {
     buildConfigField(
         "String",
         "API_KEY",
-        "\"ADD_YOUR_API_KEY\""
+        "\"$apiKey\""
     )
 }
