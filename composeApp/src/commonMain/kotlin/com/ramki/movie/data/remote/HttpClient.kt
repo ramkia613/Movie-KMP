@@ -3,8 +3,8 @@ package com.ramki.movie.data.remote
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 import co.touchlab.kermit.Logger
 import com.ramki.movie.BuildConfig
-import com.ramki.movie.data.error.toApiError
-import com.ramki.movie.data.remote.exception.ApiHttpException
+import com.ramki.movie.data.error.toAppError
+import com.ramki.movie.data.remote.exception.AppException
 import com.ramki.movie.data.remote.exception.NoInternetConnectionException
 import com.ramki.movie.data.remote.model.response.ApiErrorResponse
 import io.ktor.client.HttpClient
@@ -88,10 +88,9 @@ private fun HttpClientConfig<*>.errorHandlerConfig() {
                     val response = cause.response
                     val errorBody = response.body<String>()
                     val errorResponse = Json.decodeFromString<ApiErrorResponse>(errorBody)
-                    throw ApiHttpException(
-                        error = errorResponse.toApiError(),
-                        httpCode = response.status.value,
-                        httpMessage = errorResponse.message
+                    throw AppException(
+                        error = errorResponse.toAppError(),
+                        code = response.status.value.toString(),
                     )
                 }
 
