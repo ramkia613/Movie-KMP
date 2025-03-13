@@ -69,6 +69,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.compose.windowsizeclass)
 
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
@@ -83,6 +84,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.compose.multiplatform.material3.windowsizeclass)
             implementation(libs.navigation.compose)
 
             api(libs.koin.core)
