@@ -1,6 +1,5 @@
 package com.ramki.movie.data.remote
 
-import io.ktor.client.plugins.logging.Logger as KtorLogger
 import co.touchlab.kermit.Logger
 import com.ramki.movie.BuildConfig
 import com.ramki.movie.data.error.toAppError
@@ -24,6 +23,7 @@ import io.ktor.client.request.request
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
+import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 private const val TIMEOUT_SECONDS = 5000L
 private const val MAX_RETRIES = 3
@@ -82,19 +82,19 @@ private fun HttpClientConfig<*>.errorHandlerConfig() {
             when (cause) {
                 is IOException,
                 is SocketTimeoutException,
-                is HttpRequestTimeoutException -> throw NoInternetConnectionException
+                is HttpRequestTimeoutException -> NoInternetConnectionException
 
                 is ClientRequestException -> {
                     val response = cause.response
                     val errorBody = response.body<String>()
                     val errorResponse = Json.decodeFromString<ApiErrorResponse>(errorBody)
-                    throw AppException(
+                    AppException(
                         error = errorResponse.toAppError(),
                         code = response.status.value.toString(),
                     )
                 }
 
-                else -> throw cause
+                else -> cause
             }
         }
     }
